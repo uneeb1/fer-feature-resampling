@@ -1,0 +1,16 @@
+Best epoch    : 19
+Best Macro-F1 : 0.6730
+
+              precision    recall  f1-score   support
+
+       angry       0.61      0.63      0.62       958
+     disgust       0.75      0.60      0.67       111
+        fear       0.56      0.52      0.54      1024
+       happy       0.88      0.88      0.88      1774
+     neutral       0.62      0.64      0.63      1233
+         sad       0.55      0.56      0.56      1247
+    surprise       0.81      0.81      0.81       831
+
+    accuracy                           0.69      7178
+   macro avg       0.68      0.66      0.67      7178
+weighted avg       0.69      0.69      0.69      7178

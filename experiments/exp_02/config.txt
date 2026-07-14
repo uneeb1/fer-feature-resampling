@@ -1,0 +1,10 @@
+Experiment   : ./experiments/exp_02
+Device       : mps
+Backbone LR  : 3e-05
+Head LR      : 0.0001
+Weight decay : 0.0003
+Dropout      : 0.3
+Batch size   : 64
+Max epochs   : 30
+Patience     : 5
+Scheduler    : ReduceLROnPlateau factor=0.5 patience=3

@@ -1,0 +1,111 @@
+Device: cpu
+Seeds: [42, 123, 456]
+
+Feature files exist, loading from cache...
+Train features: (28709, 512), Val features: (7178, 512)
+Train class dist: {0: 3995, 1: 436, 2: 4097, 3: 7215, 4: 4965, 5: 4830, 6: 3171}
+
+============================================================
+SMOTE EXPERIMENTS
+============================================================
+[1/45] SKIP SMOTE_full_42.json (exists)
+[2/45] SKIP SMOTE_full_123.json (exists)
+[3/45] SKIP SMOTE_full_456.json (exists)
+[4/45] SKIP SMOTE_median_42.json (exists)
+[5/45] SKIP SMOTE_median_123.json (exists)
+[6/45] SKIP SMOTE_median_456.json (exists)
+[7/45] SKIP SMOTE_minority_only_42.json (exists)
+[8/45] SKIP SMOTE_minority_only_123.json (exists)
+[9/45] SKIP SMOTE_minority_only_456.json (exists)
+[10/45] SKIP BorderlineSMOTE_full_42.json (exists)
+[11/45] SKIP BorderlineSMOTE_full_123.json (exists)
+[12/45] SKIP BorderlineSMOTE_full_456.json (exists)
+[13/45] SKIP BorderlineSMOTE_median_42.json (exists)
+[14/45] SKIP BorderlineSMOTE_median_123.json (exists)
+[15/45] SKIP BorderlineSMOTE_median_456.json (exists)
+[16/45] SKIP BorderlineSMOTE_minority_only_42.json (exists)
+[17/45] SKIP BorderlineSMOTE_minority_only_123.json (exists)
+[18/45] SKIP BorderlineSMOTE_minority_only_456.json (exists)
+[19/45] SKIP SVMSMOTE_full_42.json (exists)
+[20/45] SKIP SVMSMOTE_full_123.json (exists)
+[21/45] SKIP SVMSMOTE_full_456.json (exists)
+[22/45] SKIP SVMSMOTE_median_42.json (exists)
+[23/45] SKIP SVMSMOTE_median_123.json (exists)
+[24/45] SKIP SVMSMOTE_median_456.json (exists)
+[25/45] SKIP SVMSMOTE_minority_only_42.json (exists)
+[26/45] SKIP SVMSMOTE_minority_only_123.json (exists)
+[27/45] SKIP SVMSMOTE_minority_only_456.json (exists)
+[28/45] SKIP ADASYN_full_42.json (exists)
+[29/45] SKIP ADASYN_full_123.json (exists)
+[30/45] SKIP ADASYN_full_456.json (exists)
+[31/45] ADASYN / median / seed=42 ... ERROR (0.7s): No samples will be generated with the provided ratio settings.
+Traceback (most recent call last):
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/run_experiments.py", line 246, in run_smote_experiments
+    X_res, y_res = sampler.fit_resample(train_features, train_labels)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/imblearn/base.py", line 204, in fit_resample
+    return super().fit_resample(X, y, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/sklearn/base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/imblearn/base.py", line 107, in fit_resample
+    output = self._fit_resample(X, y, **params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/imblearn/over_sampling/_adasyn.py", line 173, in _fit_resample
+    raise ValueError(
+ValueError: No samples will be generated with the provided ratio settings.
+[32/45] ADASYN / median / seed=123 ... ERROR (0.6s): No samples will be generated with the provided ratio settings.
+Traceback (most recent call last):
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/run_experiments.py", line 246, in run_smote_experiments
+    X_res, y_res = sampler.fit_resample(train_features, train_labels)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/imblearn/base.py", line 204, in fit_resample
+    return super().fit_resample(X, y, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/sklearn/base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/imblearn/base.py", line 107, in fit_resample
+    output = self._fit_resample(X, y, **params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/imblearn/over_sampling/_adasyn.py", line 173, in _fit_resample
+    raise ValueError(
+ValueError: No samples will be generated with the provided ratio settings.
+[33/45] ADASYN / median / seed=456 ... ERROR (0.7s): No samples will be generated with the provided ratio settings.
+Traceback (most recent call last):
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/run_experiments.py", line 246, in run_smote_experiments
+    X_res, y_res = sampler.fit_resample(train_features, train_labels)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/imblearn/base.py", line 204, in fit_resample
+    return super().fit_resample(X, y, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/sklearn/base.py", line 1403, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/imblearn/base.py", line 107, in fit_resample
+    output = self._fit_resample(X, y, **params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sheikh/Documents/Development/experiment2-20260709T134634Z-2-001/experiment2/venv/lib/python3.12/site-packages/imblearn/over_sampling/_adasyn.py", line 173, in _fit_resample
+    raise ValueError(
+ValueError: No samples will be generated with the provided ratio settings.
+[34/45] SKIP ADASYN_minority_only_42.json (exists)
+[35/45] SKIP ADASYN_minority_only_123.json (exists)
+[36/45] SKIP ADASYN_minority_only_456.json (exists)
+[37/45] SKIP SMOTETomek_full_42.json (exists)
+[38/45] SKIP SMOTETomek_full_123.json (exists)
+[39/45] SKIP SMOTETomek_full_456.json (exists)
+[40/45] SKIP SMOTETomek_median_42.json (exists)
+[41/45] SKIP SMOTETomek_median_123.json (exists)
+[42/45] SKIP SMOTETomek_median_456.json (exists)
+[43/45] SKIP SMOTETomek_minority_only_42.json (exists)
+[44/45] SKIP SMOTETomek_minority_only_123.json (exists)
+[45/45] SKIP SMOTETomek_minority_only_456.json (exists)
+
+============================================================
+CLASS-WEIGHTED LOSS EXPERIMENTS
+============================================================
+Class weights: {'angry': '0.480', 'disgust': '4.398', 'fear': '0.468', 'happy': '0.266', 'neutral': '0.386', 'sad': '0.397', 'surprise': '0.605'}
+
+Class-weighted loss / seed=42
+  Epoch 1/30  Val F1=0.4825  Acc=0.5366
