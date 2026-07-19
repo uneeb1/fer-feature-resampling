@@ -148,7 +148,7 @@ def extract_features():
 
 # ── Step 2: SMOTE Head Training ──────────────────────────────────────────────
 
-def train_head(train_X, train_y, val_X, val_y, seed, num_epochs=50):
+def train_head(train_X, train_y, val_X, val_y, seed, num_epochs=50, save_head_path=None):
     set_seed(seed)
     train_ds = TensorDataset(torch.FloatTensor(train_X), torch.LongTensor(train_y))
     val_ds = TensorDataset(torch.FloatTensor(val_X), torch.LongTensor(val_y))
@@ -197,13 +197,17 @@ def train_head(train_X, train_y, val_X, val_y, seed, num_epochs=50):
                 zero_division=0, output_dict=True)
             best_cm = confusion_matrix(all_labels, all_preds).tolist()
 
-    return {
+    result = {
         "val_macro_f1": round(best_f1, 4),
         "val_accuracy": round(best_acc, 4),
         "best_epoch": best_epoch,
         "classification_report": best_report,
         "confusion_matrix": best_cm,
     }
+    if save_head_path and best_state is not None:
+        os.makedirs(os.path.dirname(save_head_path), exist_ok=True)
+        torch.save(best_state, save_head_path)
+    return result
 
 
 def run_smote_experiments(train_features, train_labels, val_features, val_labels):
@@ -244,7 +248,8 @@ def run_smote_experiments(train_features, train_labels, val_features, val_labels
                             sampler = variant_cls(sampling_strategy=targets, random_state=seed, k_neighbors=k)
 
                     X_res, y_res = sampler.fit_resample(train_features, train_labels)
-                    result = train_head(X_res, y_res, val_features, val_labels, seed)
+                    head_path = os.path.join(SMOTE_DIR, f"{variant_name}_{strategy}_{seed}.pth")
+                    result = train_head(X_res, y_res, val_features, val_labels, seed, save_head_path=head_path)
                     result["variant"] = variant_name
                     result["strategy"] = strategy
                     result["seed"] = seed

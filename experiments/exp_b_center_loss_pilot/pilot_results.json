@@ -1,0 +1,32 @@
+[
+  {
+    "config": "CE_only",
+    "seed": 42,
+    "best_val_f1": 0.5307,
+    "overall_silhouette": 0.0181,
+    "per_class_silhouette": {
+      "angry": -0.0405,
+      "disgust": 0.0347,
+      "fear": -0.0668,
+      "happy": 0.0793,
+      "neutral": 0.0258,
+      "sad": -0.0021,
+      "surprise": 0.0763
+    }
+  },
+  {
+    "config": "CE_center",
+    "seed": 42,
+    "best_val_f1": 0.4855,
+    "overall_silhouette": 0.0594,
+    "per_class_silhouette": {
+      "angry": -0.1026,
+      "disgust": 0.0442,
+      "fear": -0.1534,
+      "happy": 0.3048,
+      "neutral": 0.0251,
+      "sad": -0.0138,
+      "surprise": 0.1476
+    }
+  }
+]

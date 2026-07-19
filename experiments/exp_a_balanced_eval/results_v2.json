@@ -1,0 +1,146 @@
+{
+  "per_class": {
+    "angry": {
+      "baseline": {
+        "mean": 0.5489,
+        "ci95": 0.0085
+      },
+      "SVMSMOTE_full": {
+        "mean": 0.5657,
+        "ci95": 0.0084
+      },
+      "ADASYN_minority_only": {
+        "mean": 0.5704,
+        "ci95": 0.0096
+      },
+      "delta_svmsmote": {
+        "mean": 0.0168,
+        "ci95": 0.0051
+      }
+    },
+    "disgust": {
+      "baseline": {
+        "mean": 0.5947,
+        "ci95": 0.01
+      },
+      "SVMSMOTE_full": {
+        "mean": 0.7654,
+        "ci95": 0.0072
+      },
+      "ADASYN_minority_only": {
+        "mean": 0.7831,
+        "ci95": 0.007
+      },
+      "delta_svmsmote": {
+        "mean": 0.1707,
+        "ci95": 0.0086
+      }
+    },
+    "fear": {
+      "baseline": {
+        "mean": 0.4824,
+        "ci95": 0.0114
+      },
+      "SVMSMOTE_full": {
+        "mean": 0.4869,
+        "ci95": 0.011
+      },
+      "ADASYN_minority_only": {
+        "mean": 0.4884,
+        "ci95": 0.0117
+      },
+      "delta_svmsmote": {
+        "mean": 0.0045,
+        "ci95": 0.0055
+      }
+    },
+    "happy": {
+      "baseline": {
+        "mean": 0.8209,
+        "ci95": 0.0068
+      },
+      "SVMSMOTE_full": {
+        "mean": 0.8416,
+        "ci95": 0.0069
+      },
+      "ADASYN_minority_only": {
+        "mean": 0.8241,
+        "ci95": 0.0071
+      },
+      "delta_svmsmote": {
+        "mean": 0.0206,
+        "ci95": 0.0034
+      }
+    },
+    "neutral": {
+      "baseline": {
+        "mean": 0.634,
+        "ci95": 0.0102
+      },
+      "SVMSMOTE_full": {
+        "mean": 0.6364,
+        "ci95": 0.0093
+      },
+      "ADASYN_minority_only": {
+        "mean": 0.6333,
+        "ci95": 0.009
+      },
+      "delta_svmsmote": {
+        "mean": 0.0024,
+        "ci95": 0.0042
+      }
+    },
+    "sad": {
+      "baseline": {
+        "mean": 0.5212,
+        "ci95": 0.0089
+      },
+      "SVMSMOTE_full": {
+        "mean": 0.5247,
+        "ci95": 0.0094
+      },
+      "ADASYN_minority_only": {
+        "mean": 0.5318,
+        "ci95": 0.0097
+      },
+      "delta_svmsmote": {
+        "mean": 0.0034,
+        "ci95": 0.005
+      }
+    },
+    "surprise": {
+      "baseline": {
+        "mean": 0.8081,
+        "ci95": 0.008
+      },
+      "SVMSMOTE_full": {
+        "mean": 0.8237,
+        "ci95": 0.0074
+      },
+      "ADASYN_minority_only": {
+        "mean": 0.8142,
+        "ci95": 0.0074
+      },
+      "delta_svmsmote": {
+        "mean": 0.0156,
+        "ci95": 0.005
+      }
+    }
+  },
+  "paired_tests": {
+    "SVMSMOTE_full": {
+      "mean_diff": 0.0334,
+      "ci95_diff": 0.0025,
+      "wilcoxon_p": 4.2663227307182344e-18,
+      "ttest_p": 7.564322888675401e-46,
+      "wins": 98
+    },
+    "ADASYN_minority_only": {
+      "mean_diff": 0.0335,
+      "ci95_diff": 0.0023,
+      "wilcoxon_p": 4.2663227307182344e-18,
+      "ttest_p": 1.4519995541687697e-49,
+      "wins": 99
+    }
+  }
+}

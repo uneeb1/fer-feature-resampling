@@ -1,0 +1,35 @@
+{
+  "baseline": {
+    "seed": 42,
+    "imbalanced_val_f1": 0.646,
+    "balanced_val_f1_mean": 0.6301,
+    "balanced_val_f1_ci95": 0.0038,
+    "balanced_val_f1_std": 0.0193,
+    "balanced_val_f1_min": 0.5884,
+    "balanced_val_f1_max": 0.6926,
+    "n_draws": 100,
+    "samples_per_class": 55
+  },
+  "SVMSMOTE_full": {
+    "seed": 456,
+    "imbalanced_val_f1": 0.6391,
+    "balanced_val_f1_mean": 0.6647,
+    "balanced_val_f1_ci95": 0.0041,
+    "balanced_val_f1_std": 0.0207,
+    "balanced_val_f1_min": 0.6122,
+    "balanced_val_f1_max": 0.7252,
+    "n_draws": 100,
+    "samples_per_class": 55
+  },
+  "ADASYN_minority_only": {
+    "seed": 123,
+    "imbalanced_val_f1": 0.6301,
+    "balanced_val_f1_mean": 0.6656,
+    "balanced_val_f1_ci95": 0.0039,
+    "balanced_val_f1_std": 0.0198,
+    "balanced_val_f1_min": 0.6193,
+    "balanced_val_f1_max": 0.7157,
+    "n_draws": 100,
+    "samples_per_class": 55
+  }
+}

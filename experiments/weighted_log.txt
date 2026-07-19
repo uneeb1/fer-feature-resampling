@@ -26,3 +26,72 @@ Class-weighted loss / seed=123
 ==================================================
   Epoch 1/30  Val F1=0.4856  Acc=0.5368  (71054.1s)
   Epoch 2/30  Val F1=0.5512  Acc=0.5886  (1450.8s)
+  Epoch 3/30  Val F1=0.5801  Acc=0.6169  (1453.9s)
+  Epoch 4/30  Val F1=0.6025  Acc=0.6385  (1739.6s)
+  Epoch 5/30  Val F1=0.5914  Acc=0.6326  (1517.0s)
+  Epoch 6/30  Val F1=0.6215  Acc=0.6516  (1501.4s)
+  Epoch 7/30  Val F1=0.6217  Acc=0.6520  (1371.2s)
+  Epoch 8/30  Val F1=0.6371  Acc=0.6576  (1884.6s)
+  Epoch 9/30  Val F1=0.6331  Acc=0.6595  (1809.0s)
+  Epoch 10/30  Val F1=0.6351  Acc=0.6587  (1351.9s)
+  Epoch 11/30  Val F1=0.6368  Acc=0.6594  (1341.7s)
+  Epoch 12/30  Val F1=0.6349  Acc=0.6592  (1345.8s)
+  Epoch 13/30  Val F1=0.6313  Acc=0.6585  (1357.3s)
+  Early stopping at epoch 13
+  SAVED: weighted_123.json  Best F1=0.6371 at epoch 8
+
+==================================================
+Class-weighted loss / seed=456
+==================================================
+  Epoch 1/30  Val F1=0.4670  Acc=0.5155  (1280.9s)
+  Epoch 2/30  Val F1=0.5240  Acc=0.5741  (1277.7s)
+  Epoch 3/30  Val F1=0.5389  Acc=0.5922  (1273.7s)
+  Epoch 4/30  Val F1=0.5885  Acc=0.6291  (1338.7s)
+  Epoch 5/30  Val F1=0.6179  Acc=0.6478  (1460.2s)
+  Epoch 6/30  Val F1=0.6208  Acc=0.6514  (1489.2s)
+  Epoch 7/30  Val F1=0.6307  Acc=0.6569  (1483.2s)
+  Epoch 8/30  Val F1=0.6303  Acc=0.6552  (1375.8s)
+  Epoch 9/30  Val F1=0.6321  Acc=0.6551  (1801.0s)
+  Epoch 10/30  Val F1=0.6390  Acc=0.6591  (2482.6s)
+  Epoch 11/30  Val F1=0.6384  Acc=0.6585  (2494.0s)
+  Epoch 12/30  Val F1=0.6400  Acc=0.6588  (2551.7s)
+  Epoch 13/30  Val F1=0.6371  Acc=0.6576  (2536.8s)
+  Epoch 14/30  Val F1=0.6387  Acc=0.6585  (2513.9s)
+  Epoch 15/30  Val F1=0.6372  Acc=0.6580  (1970.8s)
+  Epoch 16/30  Val F1=0.6404  Acc=0.6592  (1308.3s)
+  Epoch 17/30  Val F1=0.6394  Acc=0.6599  (1312.5s)
+  Epoch 18/30  Val F1=0.6393  Acc=0.6587  (1310.7s)
+  Epoch 19/30  Val F1=0.6403  Acc=0.6592  (1312.3s)
+  Epoch 20/30  Val F1=0.6378  Acc=0.6608  (1310.6s)
+  Epoch 21/30  Val F1=0.6371  Acc=0.6574  (1315.5s)
+  Early stopping at epoch 21
+  SAVED: weighted_456.json  Best F1=0.6404 at epoch 16
+
+============================================================
+GENERATING SUMMARY
+============================================================
+
+-------------------------------------------------------------------------
+Method             Strategy         Mean F1     Std  Disgust F1   Fear F1
+-------------------------------------------------------------------------
+Baseline           —                 0.6440       —      0.5300    0.4900
+SMOTE              full              0.6348  0.0012      0.4849    0.4980
+SMOTE              median            0.6354  0.0023      0.4879    0.4926
+SMOTE              minority_only     0.6351  0.0013      0.4849    0.4929
+BorderlineSMOTE    full              0.6284  0.0007      0.4739    0.4903
+BorderlineSMOTE    median            0.6352  0.0014      0.4851    0.4944
+BorderlineSMOTE    minority_only     0.6344  0.0010      0.4812    0.4921
+SVMSMOTE           full              0.6385  0.0007      0.5078    0.4939
+SVMSMOTE           median            0.6371  0.0013      0.4979    0.4901
+SVMSMOTE           minority_only     0.6374  0.0006      0.5027    0.4920
+ADASYN             full              0.6230  0.0000      0.4457    0.4895
+ADASYN             minority_only     0.6298  0.0007      0.4529    0.4919
+SMOTETomek         full              0.6344  0.0018      0.4801    0.4964
+SMOTETomek         median            0.6352  0.0019      0.4884    0.4904
+SMOTETomek         minority_only     0.6353  0.0013      0.4894    0.4947
+ClassWeighted      —                 0.6396  0.0018      0.6281    0.4692
+-------------------------------------------------------------------------
+
+Saved: ./experiments/summary.txt
+Saved: ./experiments/summary.csv
+DONE
