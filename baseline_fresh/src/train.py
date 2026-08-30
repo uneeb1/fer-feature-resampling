@@ -147,7 +147,9 @@ def train_model(model, train_loader, val_loader, cfg, device, save_path, param_g
         history["val_f1"].append(val_f1)
         history["train_f1"].append(train_f1)
 
-        log_fn(f"Epoch {epoch+1:3d}/{epochs} | LR {lr:.6f} | "
+        lrs = [pg["lr"] for pg in optimizer.param_groups]
+        lr_str = "/".join(f"{x:.2e}" for x in lrs)
+        log_fn(f"Epoch {epoch+1:3d}/{epochs} | LR {lr_str} | "
                f"Train Loss {train_loss:.4f} Acc {train_acc:.4f} F1 {train_f1:.4f} | "
                f"Val Loss {val_loss:.4f} Acc {val_acc:.4f} F1 {val_f1:.4f} | "
                f"{elapsed:.1f}s")
