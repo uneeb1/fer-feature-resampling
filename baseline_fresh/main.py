@@ -153,11 +153,15 @@ def main():
         val_loader = DataLoader(val_ds, batch_size=cfg["training"]["batch_size"],
                                 shuffle=False, num_workers=nw, pin_memory=(device.type == "cuda"))
 
-        model = FERResNet18(num_classes=7).to(device)
+        freeze_stages = cfg.get("model", {}).get("freeze_stages", None)
+        model = FERResNet18(num_classes=7, freeze_stages=freeze_stages).to(device)
+
+        lr_mults = cfg.get("training", {}).get("lr_mults", None)
+        param_groups = model.param_groups(cfg["training"]["lr"], lr_mults)
         ckpt_path = f"{base_dir}/checkpoints/best_seed{seed}.pt"
 
         history, best_epoch, best_f1, stop_epoch = train_model(
-            model, train_loader, val_loader, cfg, device, ckpt_path
+            model, train_loader, val_loader, cfg, device, ckpt_path, param_groups=param_groups
         )
 
         # Plot curves for this seed

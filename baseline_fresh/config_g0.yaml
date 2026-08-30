@@ -1,3 +1,4 @@
+## G0: Current baseline (reference)
 data:
   csv_path: "../experiments/fer2013_final/source/fer2013.csv"
   resolution: 224
@@ -39,11 +40,4 @@ evaluation:
 
 seeds: [42, 123, 456]
 
-classes:
-  - angry
-  - disgust
-  - fear
-  - happy
-  - sad
-  - surprise
-  - neutral
+classes: [angry, disgust, fear, happy, sad, surprise, neutral]

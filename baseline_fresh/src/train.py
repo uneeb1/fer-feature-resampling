@@ -1,25 +1,44 @@
 import math
 import time
+import numpy as np
 import torch
 import torch.nn as nn
 from sklearn.metrics import f1_score
 
 
 def get_lr(epoch, base_lr, warmup_epochs, total_epochs):
+    """Returns LR (or LR multiplier when base_lr=1.0)."""
     if epoch < warmup_epochs:
         return base_lr * (epoch + 1) / warmup_epochs
-    progress = (epoch - warmup_epochs) / (total_epochs - warmup_epochs)
+    progress = (epoch - warmup_epochs) / max(total_epochs - warmup_epochs, 1)
     return base_lr * 0.5 * (1.0 + math.cos(math.pi * progress))
 
 
-def train_one_epoch(model, loader, criterion, optimizer, device):
+def mixup_data(x, y, alpha, device):
+    lam = np.random.beta(alpha, alpha) if alpha > 0 else 1.0
+    batch_size = x.size(0)
+    index = torch.randperm(batch_size, device=device)
+    mixed_x = lam * x + (1 - lam) * x[index]
+    return mixed_x, y, y[index], lam
+
+
+def mixup_criterion(criterion, logits, y_a, y_b, lam):
+    return lam * criterion(logits, y_a) + (1 - lam) * criterion(logits, y_b)
+
+
+def train_one_epoch(model, loader, criterion, optimizer, device, mixup_alpha=0.0):
     model.train()
     total_loss, correct, total = 0.0, 0, 0
     all_preds, all_labels = [], []
     for images, labels in loader:
         images, labels = images.to(device), labels.to(device)
-        logits = model(images)
-        loss = criterion(logits, labels)
+        if mixup_alpha > 0:
+            mixed_images, y_a, y_b, lam = mixup_data(images, labels, mixup_alpha, device)
+            logits = model(mixed_images)
+            loss = mixup_criterion(criterion, logits, y_a, y_b, lam)
+        else:
+            logits = model(images)
+            loss = criterion(logits, labels)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -88,10 +107,12 @@ def evaluate_tta(model, dataset, device, resolution=224, batch_size=32):
     return acc, macro_f1, per_class_f1, all_preds, all_labels
 
 
-def train_model(model, train_loader, val_loader, cfg, device, save_path, log_fn=print):
+def train_model(model, train_loader, val_loader, cfg, device, save_path, param_groups=None, log_fn=print):
     criterion = nn.CrossEntropyLoss(label_smoothing=cfg["training"]["label_smoothing"])
+    if param_groups is None:
+        param_groups = [{"params": model.parameters(), "lr": cfg["training"]["lr"]}]
     optimizer = torch.optim.SGD(
-        model.parameters(),
+        param_groups,
         lr=cfg["training"]["lr"],
         momentum=cfg["training"]["momentum"],
         weight_decay=cfg["training"]["weight_decay"],
@@ -100,21 +121,23 @@ def train_model(model, train_loader, val_loader, cfg, device, save_path, log_fn=
     epochs = cfg["training"]["epochs"]
     warmup = cfg["training"]["warmup_epochs"]
     base_lr = cfg["training"]["lr"]
+    mixup_alpha = cfg.get("augmentation", {}).get("mixup_alpha", 0.0)
     best_f1, best_epoch = 0.0, 0
     patience = cfg["training"].get("early_stop_patience", 20)
     min_delta = cfg["training"].get("early_stop_min_delta", 0.0)
     epochs_no_improve = 0
     stop_epoch = epochs
+    initial_lrs = [pg["lr"] for pg in optimizer.param_groups]
     history = {"train_loss": [], "val_loss": [], "val_acc": [], "val_f1": [], "train_f1": [], "lr": []}
 
     for epoch in range(epochs):
-        lr = get_lr(epoch, base_lr, warmup, epochs)
-        for pg in optimizer.param_groups:
-            pg["lr"] = lr
-        history["lr"].append(lr)
+        lr_scale = get_lr(epoch, 1.0, warmup, epochs)
+        for pg, init_lr in zip(optimizer.param_groups, initial_lrs):
+            pg["lr"] = init_lr * lr_scale
+        history["lr"].append(base_lr * lr_scale)
 
         t0 = time.time()
-        train_loss, train_acc, train_f1 = train_one_epoch(model, train_loader, criterion, optimizer, device)
+        train_loss, train_acc, train_f1 = train_one_epoch(model, train_loader, criterion, optimizer, device, mixup_alpha=mixup_alpha)
         val_loss, val_acc, val_f1, val_pcf1, _, _ = evaluate(model, val_loader, criterion, device)
         elapsed = time.time() - t0
 

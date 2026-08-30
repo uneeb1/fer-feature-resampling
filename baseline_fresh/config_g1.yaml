@@ -1,3 +1,4 @@
+## G1: Partial freeze + discriminative LR
 data:
   csv_path: "../experiments/fer2013_final/source/fer2013.csv"
   resolution: 224
@@ -11,6 +12,7 @@ model:
   weights: IMAGENET1K_V1
   num_classes: 7
   feature_dim: 512
+  freeze_stages: [conv1, bn1, layer1, layer2]
 
 training:
   epochs: 100
@@ -24,6 +26,10 @@ training:
   schedule: cosine
   early_stop_patience: 20
   early_stop_min_delta: 0.0
+  lr_mults:
+    layer3: 0.1
+    layer4: 0.333
+    fc: 1.0
 
 augmentation:
   horizontal_flip: true
@@ -39,11 +45,4 @@ evaluation:
 
 seeds: [42, 123, 456]
 
-classes:
-  - angry
-  - disgust
-  - fear
-  - happy
-  - sad
-  - surprise
-  - neutral
+classes: [angry, disgust, fear, happy, sad, surprise, neutral]
