@@ -1,0 +1,45 @@
+data:
+  csv_path: "../experiments/fer2013_final/source/fer2013.csv"
+  resolution: 224
+  num_workers: 4
+  clahe: false
+  face_clean: false
+
+model:
+  backbone: resnet18
+  weights: IMAGENET1K_V1
+  num_classes: 7
+  feature_dim: 512
+
+training:
+  epochs: 100
+  batch_size: 64
+  optimizer: sgd
+  lr: 0.01
+  momentum: 0.9
+  weight_decay: 0.0005
+  label_smoothing: 0.1
+  warmup_epochs: 5
+  schedule: cosine
+
+augmentation:
+  horizontal_flip: true
+  random_crop_pad: 4
+  rotation_degrees: 15
+  random_erasing: false
+
+evaluation:
+  tta: true
+  tta_crops: 10
+  primary_metric: macro_f1
+
+seeds: [42, 123, 456]
+
+classes:
+  - angry
+  - disgust
+  - fear
+  - happy
+  - sad
+  - surprise
+  - neutral

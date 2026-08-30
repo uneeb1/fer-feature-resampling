@@ -4,3 +4,25 @@ __pycache__/
 data/
 *.npy
 *.pth
+*.pt
+*.csv
+*.zip
+*.tar.gz
+
+# Datasets and large dirs
+Fer_plus/
+archive/
+figures/
+logs/
+results/
+
+# Experiment data (images, checkpoints, features)
+experiments/*/source/
+experiments/*/figures/
+experiments/*/data_lossless/
+experiments/*/data/
+experiments/*/outputs/
+**/checkpoints/
+**/features/
+**/outputs/
+*.png
