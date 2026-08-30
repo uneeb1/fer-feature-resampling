@@ -1,0 +1,46 @@
+## M2: Moderate MixUp + higher dropout
+## Note: train F1 under MixUp is measured on mixed inputs — not directly
+## comparable to non-MixUp train F1. Use val vs test gap for generalization check.
+data:
+  csv_path: "../experiments/fer2013_final/source/fer2013.csv"
+  resolution: 224
+  num_workers: 4
+  clahe: false
+  face_clean: false
+  leakage_filter: true
+
+model:
+  backbone: resnet18
+  weights: IMAGENET1K_V1
+  num_classes: 7
+  feature_dim: 512
+  dropout: 0.5
+
+training:
+  epochs: 100
+  batch_size: 64
+  optimizer: sgd
+  lr: 0.005
+  momentum: 0.9
+  weight_decay: 0.002
+  label_smoothing: 0.1
+  warmup_epochs: 5
+  schedule: cosine
+  early_stop_patience: 20
+  early_stop_min_delta: 0.0
+
+augmentation:
+  horizontal_flip: true
+  random_crop_pad: 4
+  rotation_degrees: 15
+  random_erasing: false
+  mixup_alpha: 0.2
+
+evaluation:
+  tta: true
+  tta_crops: 10
+  primary_metric: macro_f1
+
+seeds: [42]
+
+classes: [angry, disgust, fear, happy, sad, surprise, neutral]
