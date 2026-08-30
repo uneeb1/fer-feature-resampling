@@ -154,7 +154,8 @@ def main():
                                 shuffle=False, num_workers=nw, pin_memory=(device.type == "cuda"))
 
         freeze_stages = cfg.get("model", {}).get("freeze_stages", None)
-        model = FERResNet18(num_classes=7, freeze_stages=freeze_stages).to(device)
+        dropout = cfg.get("model", {}).get("dropout", 0.4)
+        model = FERResNet18(num_classes=7, freeze_stages=freeze_stages, dropout=dropout).to(device)
 
         lr_mults = cfg.get("training", {}).get("lr_mults", None)
         param_groups = model.param_groups(cfg["training"]["lr"], lr_mults)

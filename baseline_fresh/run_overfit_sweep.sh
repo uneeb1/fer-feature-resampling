@@ -3,7 +3,7 @@ set -euo pipefail
 
 echo "=== Overfitting-Reduction Sweep (seed=42, 224x224) ==="
 
-for config in g0 g1 g2; do
+for config in g0 g1 g2 g3; do
     out_dir="./sweep_${config}"
     echo ""
     echo "============================================================"
@@ -24,8 +24,8 @@ echo "=== Sweep complete. Generating comparison table... ==="
 python3 -c "
 import json, os
 
-configs = ['g0', 'g1', 'g2']
-labels = {'g0': 'G0 (baseline)', 'g1': 'G1 (freeze+discLR)', 'g2': 'G2 (G1+mixup+wd)'}
+configs = ['g0', 'g1', 'g2', 'g3']
+labels = {'g0': 'G0 (baseline)', 'g1': 'G1 (freeze+discLR)', 'g2': 'G2 (G1+mixup+wd)', 'g3': 'G3 (full+stacked reg)'}
 rows = []
 for c in configs:
     path = f'./sweep_{c}/metrics.json'

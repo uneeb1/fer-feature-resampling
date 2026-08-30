@@ -4,7 +4,7 @@ from torchvision import models
 
 
 class FERResNet18(nn.Module):
-    def __init__(self, num_classes=7, freeze_stages=None):
+    def __init__(self, num_classes=7, freeze_stages=None, dropout=0.4):
         super().__init__()
         backbone = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
         self.conv1 = backbone.conv1
@@ -16,6 +16,7 @@ class FERResNet18(nn.Module):
         self.layer3 = backbone.layer3
         self.layer4 = backbone.layer4
         self.avgpool = backbone.avgpool
+        self.dropout = nn.Dropout(p=dropout)
         self.fc = nn.Linear(512, num_classes)
 
         if freeze_stages:
@@ -66,7 +67,7 @@ class FERResNet18(nn.Module):
         x = self.layer4(x)
         x = self.avgpool(x)
         feat = torch.flatten(x, 1)
-        logits = self.fc(feat)
+        logits = self.fc(self.dropout(feat))
         if return_features:
             return logits, feat
         return logits
