@@ -4,6 +4,7 @@ data:
   num_workers: 4
   clahe: false
   face_clean: false
+  dedupe: true
 
 model:
   backbone: resnet18
