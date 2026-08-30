@@ -87,8 +87,8 @@ def main():
     if not os.path.isabs(csv_path):
         csv_path = os.path.join(os.path.dirname(args.config), csv_path)
     print(f"Loading data from {csv_path} ...")
-    dedupe = cfg["data"].get("dedupe", True)
-    splits = load_fer2013_csv(csv_path, dedupe=dedupe)
+    leakage_filter = cfg["data"].get("leakage_filter", True)
+    splits = load_fer2013_csv(csv_path, leakage_filter=leakage_filter)
 
     if args.subset:
         for k in splits:
