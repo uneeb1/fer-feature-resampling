@@ -15,6 +15,7 @@ def get_lr(epoch, base_lr, warmup_epochs, total_epochs):
 def train_one_epoch(model, loader, criterion, optimizer, device):
     model.train()
     total_loss, correct, total = 0.0, 0, 0
+    all_preds, all_labels = [], []
     for images, labels in loader:
         images, labels = images.to(device), labels.to(device)
         logits = model(images)
@@ -25,7 +26,10 @@ def train_one_epoch(model, loader, criterion, optimizer, device):
         total_loss += loss.item() * images.size(0)
         correct += (logits.argmax(1) == labels).sum().item()
         total += images.size(0)
-    return total_loss / total, correct / total
+        all_preds.extend(logits.argmax(1).cpu().tolist())
+        all_labels.extend(labels.cpu().tolist())
+    train_f1 = f1_score(all_labels, all_preds, average="macro")
+    return total_loss / total, correct / total, train_f1
 
 
 @torch.no_grad()
@@ -97,7 +101,11 @@ def train_model(model, train_loader, val_loader, cfg, device, save_path, log_fn=
     warmup = cfg["training"]["warmup_epochs"]
     base_lr = cfg["training"]["lr"]
     best_f1, best_epoch = 0.0, 0
-    history = {"train_loss": [], "val_loss": [], "val_acc": [], "val_f1": [], "lr": []}
+    patience = cfg["training"].get("early_stop_patience", 20)
+    min_delta = cfg["training"].get("early_stop_min_delta", 0.0)
+    epochs_no_improve = 0
+    stop_epoch = epochs
+    history = {"train_loss": [], "val_loss": [], "val_acc": [], "val_f1": [], "train_f1": [], "lr": []}
 
     for epoch in range(epochs):
         lr = get_lr(epoch, base_lr, warmup, epochs)
@@ -106,7 +114,7 @@ def train_model(model, train_loader, val_loader, cfg, device, save_path, log_fn=
         history["lr"].append(lr)
 
         t0 = time.time()
-        train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device)
+        train_loss, train_acc, train_f1 = train_one_epoch(model, train_loader, criterion, optimizer, device)
         val_loss, val_acc, val_f1, val_pcf1, _, _ = evaluate(model, val_loader, criterion, device)
         elapsed = time.time() - t0
 
@@ -114,15 +122,17 @@ def train_model(model, train_loader, val_loader, cfg, device, save_path, log_fn=
         history["val_loss"].append(val_loss)
         history["val_acc"].append(val_acc)
         history["val_f1"].append(val_f1)
+        history["train_f1"].append(train_f1)
 
         log_fn(f"Epoch {epoch+1:3d}/{epochs} | LR {lr:.6f} | "
-               f"Train Loss {train_loss:.4f} Acc {train_acc:.4f} | "
+               f"Train Loss {train_loss:.4f} Acc {train_acc:.4f} F1 {train_f1:.4f} | "
                f"Val Loss {val_loss:.4f} Acc {val_acc:.4f} F1 {val_f1:.4f} | "
                f"{elapsed:.1f}s")
 
-        if val_f1 > best_f1:
+        if val_f1 > best_f1 + min_delta:
             best_f1 = val_f1
             best_epoch = epoch + 1
+            epochs_no_improve = 0
             torch.save({
                 "epoch": epoch + 1,
                 "model_state_dict": model.state_dict(),
@@ -130,6 +140,15 @@ def train_model(model, train_loader, val_loader, cfg, device, save_path, log_fn=
                 "val_acc": float(val_acc),
             }, save_path)
             log_fn(f"  -> New best val F1: {val_f1:.4f} (saved)")
+        else:
+            epochs_no_improve += 1
 
+        if epoch >= warmup and epochs_no_improve >= patience:
+            stop_epoch = epoch + 1
+            log_fn(f"Early stop at epoch {stop_epoch} (best val F1 {best_f1:.4f} @ epoch {best_epoch})")
+            break
+
+    if stop_epoch == epochs:
+        stop_epoch = epochs
     log_fn(f"Best val F1: {best_f1:.4f} at epoch {best_epoch}")
-    return history, best_epoch, best_f1
+    return history, best_epoch, best_f1, stop_epoch

@@ -16,12 +16,14 @@ training:
   epochs: 100
   batch_size: 64
   optimizer: sgd
-  lr: 0.01
+  lr: 0.005
   momentum: 0.9
-  weight_decay: 0.0005
+  weight_decay: 0.001
   label_smoothing: 0.1
   warmup_epochs: 5
   schedule: cosine
+  early_stop_patience: 20
+  early_stop_min_delta: 0.0
 
 augmentation:
   horizontal_flip: true

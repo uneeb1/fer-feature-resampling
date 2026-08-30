@@ -156,7 +156,7 @@ def main():
         model = FERResNet18(num_classes=7).to(device)
         ckpt_path = f"{base_dir}/checkpoints/best_seed{seed}.pt"
 
-        history, best_epoch, best_f1 = train_model(
+        history, best_epoch, best_f1, stop_epoch = train_model(
             model, train_loader, val_loader, cfg, device, ckpt_path
         )
 
@@ -190,11 +190,26 @@ def main():
         for i, name in enumerate(CLASSES):
             print(f"  {name:<10}: F1={test_pcf1[i]:.4f}")
 
+        train_f1_at_best = history["train_f1"][best_epoch - 1] if best_epoch <= len(history["train_f1"]) else history["train_f1"][-1]
+        train_val_gap = train_f1_at_best - best_f1
+        generalizes = abs(best_f1 - test_f1) < 0.02
+        verdict = "generalizes (val≈test)" if generalizes else "overfits (test<<val)"
+
+        print(f"\n  Overfitting diagnostic (seed {seed}):")
+        print(f"    Train F1: {train_f1_at_best:.4f} | Val F1: {best_f1:.4f} | Test F1: {test_f1:.4f}")
+        print(f"    Train-Val gap: {train_val_gap:.4f}")
+        print(f"    Verdict: {verdict}")
+        print(f"    Disgust F1: {test_pcf1[1]:.4f} | Fear F1: {test_pcf1[2]:.4f} | Sad F1: {test_pcf1[4]:.4f}")
+
         all_results[seed] = {
             "val_f1": best_f1,
             "val_epoch": best_epoch,
+            "stop_epoch": stop_epoch,
             "test_acc": test_acc,
             "test_f1": test_f1,
+            "train_f1_at_best": float(train_f1_at_best),
+            "train_val_gap": float(train_val_gap),
+            "verdict": verdict,
             "test_per_class_f1": {CLASSES[i]: float(test_pcf1[i]) for i in range(7)},
             "history": {k: [float(v) for v in vals] for k, vals in history.items()},
         }
