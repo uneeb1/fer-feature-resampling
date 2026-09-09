@@ -86,3 +86,66 @@ baseline_fresh/
 512-d features are extracted from the penultimate layer (after global avgpool,
 after ReLU, before fc head). These are **non-negative** by construction (ReLU
 output) and ready for SMOTE-family resampling in the next phase.
+
+## Center Loss Experiment (M2 + Center Loss)
+
+Adds a joint softmax + center loss term (Wen et al., ECCV 2016) to the M2
+training. Everything else is identical to M2 — same backbone, augmentation,
+schedule, MixUp, TTA, and checkpoint rule.
+
+### Hyperparameters
+
+- `lam_center`: weight of the center loss term ({0.001, 0.01, 0.1})
+- `alpha_center`: center optimizer LR (fixed at 0.5)
+
+### Stage A — Lambda sweep (seed 42 only, 3 runs)
+
+Pick best `lam_center` on val macro-F1.
+
+```bash
+# On Kaggle (GPU T4), from /kaggle/working/baseline_fresh/:
+python train_center_loss.py --config config_m2.yaml --lam-center 0.001 --output-dir M2center_lam0.001
+python train_center_loss.py --config config_m2.yaml --lam-center 0.01  --output-dir M2center_lam0.01
+python train_center_loss.py --config config_m2.yaml --lam-center 0.1   --output-dir M2center_lam0.1
+```
+
+Expected runtime: ~15–20 min per run on T4 (100 epochs max, early stop ~40–60 ep).
+Stage A total: ~45–60 min.
+
+### Stage B — Best lambda, 3 seeds
+
+After picking best lam (e.g. 0.01), run all seeds and extract features:
+
+```bash
+python train_center_loss.py --config config_m2.yaml --lam-center 0.01 \
+    --seeds 42 123 456 --output-dir M2center_seed42 --extract-features
+```
+
+Expected runtime: ~45–60 min (3 seeds). Features saved to `M2center_seed42/features/`.
+
+### Stage 2 — Resampling on center-loss features
+
+After extracting features, run the existing resampling pipeline:
+
+```bash
+bash run_resampling_on_center.sh M2center_seed42/features
+```
+
+### Outputs
+
+```
+M2center_lam{X}/
+├── checkpoints/best_seed{42}.pt
+├── features/{train,val,test}_{features,labels}.npy  (if --extract-features)
+├── config_center_loss.json
+└── metrics.json
+```
+
+### Kaggle workflow
+
+1. Upload `baseline_fresh/` as a dataset (include `train_center_loss.py` and `src/`).
+2. Add FER2013 dataset as input.
+3. Enable GPU T4.
+4. Run Stage A cells, check `metrics.json` for best val F1 across lambdas.
+5. Run Stage B with best lambda.
+6. Download features + metrics. Save Version → Save & Run All to persist output.
