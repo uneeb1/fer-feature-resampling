@@ -86,3 +86,96 @@ baseline_fresh/
 512-d features are extracted from the penultimate layer (after global avgpool,
 after ReLU, before fc head). These are **non-negative** by construction (ReLU
 output) and ready for SMOTE-family resampling in the next phase.
+
+---
+
+## Phase 5: Geometry Loss (Center + Bounded Inter-Class Separation)
+
+### Rationale
+
+Phase 4 center loss compacted classes but did NOT separate them — entangled
+classes (fear/angry, sad/neutral) still overlap in the 512-d space. Geometry
+loss adds a **bounded, margin-hinged separation term** that pushes class centers
+apart (cosine sim → 0) while center loss pulls samples inward. The resulting
+features are better-separated for downstream feature-space resampling.
+
+**No backbone/head/logit changes.** The loss acts ONLY on the 512-d embedding
+and its class centers. Features are extracted identically and feed resampling.
+
+### Revised recipe (overfitting-tuned)
+
+| Param          | Value | Note                        |
+|----------------|-------|-----------------------------|
+| epochs         | 60    | cosine-annealed             |
+| warmup         | 5     | unchanged                   |
+| patience       | 10    | stricter early stop          |
+| min_delta      | 0.001 | small improvement threshold  |
+| weight_decay   | 0.002 | may escalate to 0.005        |
+| lr             | 0.005 | unchanged                   |
+| dropout        | 0.5   | unchanged                   |
+| label_smooth   | 0.1   | unchanged                   |
+| mixup_alpha    | 0.2   | unchanged                   |
+
+### Stage A — Sweep (seed 42, on Kaggle GPU)
+
+```bash
+cd baseline_fresh
+
+# CE baseline (revised recipe)
+python train_geometry_loss.py --config config_m2.yaml --lam-center 0 --lam-sep 0 --extract-features
+
+# Center-only (control)
+python train_geometry_loss.py --config config_m2.yaml --lam-center 0.001 --lam-sep 0 --extract-features
+
+# Geometry sweep
+python train_geometry_loss.py --config config_m2.yaml --lam-center 0.001 --lam-sep 0.001 --extract-features
+python train_geometry_loss.py --config config_m2.yaml --lam-center 0.001 --lam-sep 0.01  --extract-features
+python train_geometry_loss.py --config config_m2.yaml --lam-center 0.001 --lam-sep 0.1   --extract-features
+```
+
+Pick best `--lam-sep` by **val macro-F1**.
+
+### Stage B — 3-seed confirmation
+
+```bash
+# Best geometry config (replace 0.01 with sweep winner)
+python train_geometry_loss.py --config config_m2.yaml --lam-center 0.001 --lam-sep 0.01 --seeds 42 123 456 --extract-features
+
+# Matched CE baseline
+python train_geometry_loss.py --config config_m2.yaml --lam-center 0 --lam-sep 0 --seeds 42 123 456 --extract-features
+```
+
+### Step 2 — Resampling on geometry features
+
+```bash
+# (a) M2 features (locked reference)
+bash run_resampling_on_center.sh "M2_seed42_backup (1)/features"
+
+# (b) Revised CE baseline features
+bash run_resampling_on_geometry.sh M2geo_lamc0_lams0/features
+
+# (c) Geometry features
+bash run_resampling_on_geometry.sh M2geo_lamc0.001_lams0.01/features
+```
+
+Output lands in `results_resampling_geometry.csv` — never overwrites
+`results_resampling_v2_symmetric.csv`.
+
+### Kaggle Commit Note
+
+Upload `train_geometry_loss.py` alongside the existing `src/` directory.
+Same dependencies, same notebook setup as Phase 4. GPU runtime required.
+
+### Output structure
+
+```
+M2geo_lamc{x}_lams{y}/
+├── checkpoints/best_seed{s}.pt
+├── features/{train,val,test}_{features,labels}.npy
+├── predictions/{test,val}_{preds,labels}.npy
+├── geometry/geometry.json
+├── graphs/                    # all PNGs + figures.png contact sheet
+├── config.json                # resolved hyperparameters
+├── metrics.json               # per-seed + aggregate + geometry
+└── history.json               # full per-epoch training curves
+```
