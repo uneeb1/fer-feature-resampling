@@ -367,7 +367,7 @@ def train_one_epoch_geometry(model, loader, criterion, optimizer_main,
 
         loss_sep = sep_loss(center_loss.centers) if lam_sep > 0 else torch.tensor(0.0, device=device)
 
-        loss = loss_ce + lam_center * loss_ctr + lam_sep * loss_sep
+        loss = loss_ce + lam_center * loss_ctr + (lam_center * lam_sep) * loss_sep
 
         optimizer_main.zero_grad()
         optimizer_center.zero_grad()
