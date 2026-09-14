@@ -1,0 +1,39 @@
+{
+  "experiment": "M2_geometry_loss",
+  "lam_center": 0.001,
+  "lam_sep": 0.01,
+  "sep_target": 0.0,
+  "alpha_center": 0.5,
+  "epochs": 60,
+  "patience": 10,
+  "weight_decay": 0.002,
+  "seeds": [
+    42
+  ],
+  "timestamp": "2026-09-10 17:52:52",
+  "per_seed": {
+    "42": {
+      "val_f1": 0.6835887239373722,
+      "val_epoch": 59,
+      "stop_epoch": 60,
+      "test_acc": 0.7052103650041794,
+      "test_f1": 0.6794991916664301,
+      "test_per_class_f1": {
+        "angry": 0.6304801670146137,
+        "disgust": 0.6067415730337079,
+        "fear": 0.5467059980334317,
+        "happy": 0.8996617812852311,
+        "sad": 0.5930930930930931,
+        "surprise": 0.8058252427184466,
+        "neutral": 0.6739864864864865
+      }
+    }
+  },
+  "aggregate": {
+    "test_macro_f1_mean": 0.6794991916664301,
+    "test_macro_f1_std": 0.0,
+    "test_acc_mean": 0.7052103650041794,
+    "test_acc_std": 0.0
+  },
+  "best_seed": 42
+}

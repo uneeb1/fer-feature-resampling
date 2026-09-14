@@ -1,0 +1,3 @@
+# Feature .npy files are too large for git (277MB total).
+# They live locally and are reproduced by running the training scripts with --extract-features.
+features/**/*.npy
