@@ -42,7 +42,7 @@ import yaml
 from sklearn.metrics import f1_score, confusion_matrix, silhouette_score, silhouette_samples
 from torch.utils.data import DataLoader
 
-from src.dataset import load_fer2013_csv, verify_splits, FER2013Dataset, CLASSES
+from src.dataset import load_fer2013_csv, load_ferplus_csv, verify_splits, FER2013Dataset, CLASSES
 from src.model import FERResNet18
 from src.transforms import get_train_transform, get_val_transform
 from src.train import evaluate, evaluate_tta, get_lr, mixup_data, mixup_criterion
@@ -517,6 +517,10 @@ def parse_args():
     p.add_argument("--num-workers", type=int, default=None)
     p.add_argument("--extract-features", action="store_true", default=False,
                    help="Extract 512-d features from best-val checkpoint (seed 42)")
+    p.add_argument("--dataset", choices=["fer2013", "ferplus"], default="fer2013",
+                   help="Dataset to use (default: fer2013)")
+    p.add_argument("--ferplus-csv", default=None,
+                   help="Path to fer2013new.csv (required when --dataset ferplus)")
     return p.parse_args()
 
 
@@ -528,10 +532,14 @@ def main():
     sep_target = args.sep_target
     alpha_center = args.alpha_center
 
+    if args.dataset == "ferplus" and not args.ferplus_csv:
+        raise ValueError("--ferplus-csv is required when --dataset ferplus")
+
+    ds_prefix = "ferplus_" if args.dataset == "ferplus" else ""
     if args.output_dir:
         base_dir = args.output_dir
     else:
-        base_dir = f"M2geo_lamc{lam_center}_lams{lam_sep}"
+        base_dir = f"{ds_prefix}M2geo_lamc{lam_center}_lams{lam_sep}"
     os.makedirs(f"{base_dir}/checkpoints", exist_ok=True)
     os.makedirs(f"{base_dir}/features", exist_ok=True)
     os.makedirs(f"{base_dir}/predictions", exist_ok=True)
@@ -571,6 +579,7 @@ def main():
     # Save resolved config
     run_config = {
         "base_config": args.config,
+        "dataset": args.dataset,
         "lam_center": lam_center,
         "lam_sep": lam_sep,
         "sep_target": sep_target,
@@ -597,7 +606,10 @@ def main():
     if not os.path.isabs(csv_path):
         csv_path = os.path.join(os.path.dirname(args.config), csv_path)
     leakage_filter = cfg["data"].get("leakage_filter", True)
-    splits = load_fer2013_csv(csv_path, leakage_filter=leakage_filter)
+    if args.dataset == "ferplus":
+        splits = load_ferplus_csv(csv_path, args.ferplus_csv, leakage_filter=leakage_filter)
+    else:
+        splits = load_fer2013_csv(csv_path, leakage_filter=leakage_filter)
 
     counts = verify_splits(splits)
     print("\n=== Split Counts ===")
@@ -743,6 +755,7 @@ def main():
     test_accs = [all_results[s]["test_acc"] for s in seeds]
     metrics = {
         "experiment": "M2_geometry_loss",
+        "dataset": args.dataset,
         "lam_center": lam_center,
         "lam_sep": lam_sep,
         "sep_target": sep_target,
